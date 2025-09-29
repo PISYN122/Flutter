@@ -1,0 +1,101 @@
+import 'dart:io';
+import 'dart:math';
+
+List<int> mergeVectors(List<int> x, List<int> y) {
+  if (x.length != y.length) {
+    throw ArgumentError("Вектори мають бути однакової довжини");
+  }
+  List<int> z = [];
+  for (int i = 0; i < x.length; i++) {
+    z.add(x[i]);
+    z.add(y[i]);
+  }
+  return z;
+}
+
+int countZeros(int n) {
+  return n.toString().split('').where((ch) => ch == '0').length;
+}
+
+int maxZerosNumber(int a, int b) {
+  int zerosA = countZeros(a);
+  int zerosB = countZeros(b);
+  return (zerosA >= zerosB) ? a : b;
+}
+
+class TFraction {
+  int numerator;
+  int denominator;
+
+  TFraction(this.numerator, this.denominator) {
+    if (denominator == 0) {
+      throw ArgumentError("Знаменник не може бути 0");
+    }
+    _reduce();
+  }
+
+  TFraction.zero() : numerator = 0, denominator = 1;
+
+  TFraction.copy(TFraction other)
+      : numerator = other.numerator,
+        denominator = other.denominator;
+
+  void _reduce() {
+    int g = _gcd(numerator.abs(), denominator.abs());
+    numerator ~/= g;
+    denominator ~/= g;
+    if (denominator < 0) {
+      numerator = -numerator;
+      denominator = -denominator;
+    }
+  }
+
+  int _gcd(int a, int b) {
+    while (b != 0) {
+      int t = b;
+      b = a % b;
+      a = t;
+    }
+    return a;
+  }
+
+  TFraction operator +(TFraction other) =>
+      TFraction(numerator * other.denominator + other.numerator * denominator,
+          denominator * other.denominator);
+
+  TFraction operator -(TFraction other) =>
+      TFraction(numerator * other.denominator - other.numerator * denominator,
+          denominator * other.denominator);
+
+  TFraction operator *(TFraction other) =>
+      TFraction(numerator * other.numerator, denominator * other.denominator);
+
+  TFraction operator /(TFraction other) {
+    if (other.numerator == 0) throw ArgumentError("Ділення на 0!");
+    return TFraction(
+        numerator * other.denominator, denominator * other.numerator);
+  }
+
+  @override
+  String toString() => "$numerator/$denominator";
+}
+
+void main() {
+  var x = [1, 2, 3];
+  var y = [4, 5, 6];
+  print("Завдання 1: z = ${mergeVectors(x, y)}");
+
+  int a = 120030;
+  int b = 4500;
+  print("Завдання 2: число з найбільшою кількістю нулів = ${maxZerosNumber(a, b)}");
+
+  var f1 = TFraction(6, 9);
+  var f2 = TFraction(2, 3);
+  print("Завдання 3:");
+  print("f1 = $f1"); 
+  print("f2 = $f2");
+  print("f1 + f2 = ${f1 + f2}");
+  print("f1 - f2 = ${f1 - f2}");
+  print("f1 * f2 = ${f1 * f2}");
+  print("f1 / f2 = ${f1 / f2}");
+}
